@@ -1,0 +1,259 @@
+// app global css
+.q-table th {
+  font-size: 16px;
+}
+.q-table tbody td {
+  font-size: 16px;
+}
+.sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 2000; }
+.sidebar.collapsed {
+  width: 50px; }
+@media (min-width: 768px) {
+  .sidebar {
+    top: 10px;
+    bottom: 10px;
+    transition: width 500ms; } }
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar {
+    width: 305px; } }
+@media (min-width: 992px) {
+  .sidebar {
+    width: 390px; } }
+
+.sidebar-left {
+  left: 0; }
+@media (min-width: 768px) {
+  .sidebar-left {
+    left: 10px; } }
+
+.sidebar-right {
+  right: 0; }
+@media (min-width: 768px) {
+  .sidebar-right {
+    right: 10px; } }
+
+.sidebar-tabs {
+  top: 0;
+  bottom: 0;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75); }
+.sidebar-left .sidebar-tabs {
+  left: 0; }
+.sidebar-right .sidebar-tabs {
+  right: 0; }
+.sidebar-tabs, .sidebar-tabs > ul {
+  position: absolute;
+  width: 46px;
+  margin: 0;
+  padding: 0;
+  list-style-type: none; }
+.sidebar-tabs .q-btn {
+    margin: 4px 0
+  }
+
+.sidebar-tabs > ul + ul {
+  bottom: 0; }
+
+.sidebar-content {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.9);
+  overflow-x: hidden;
+  overflow-y: auto; }
+.sidebar-left .sidebar-content {
+  left: 46px;
+  right: 0; }
+.sidebar-right .sidebar-content {
+  left: 0;
+  right: 40px; }
+.sidebar.collapsed > .sidebar-content {
+  overflow-y: hidden; }
+
+.sidebar-pane {
+  display: none;
+  left: 0;
+  right: 0;
+  box-sizing: border-box; }
+.sidebar-pane.active {
+  display: block; }
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar-pane {
+    min-width: 265px; } }
+@media (min-width: 992px) {
+  .sidebar-pane {
+    min-width: 340px; } }
+
+.sidebar-header {
+  height: 40px;
+  padding: 0 20px;
+  line-height: 40px;
+  font-size: 14.4pt;
+  color: #fff;
+  background-color: #0074d9; }
+.sidebar-right .sidebar-header {
+  padding-left: 40px; }
+
+.sidebar-close {
+  position: absolute;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  cursor: pointer; }
+.sidebar-left .sidebar-close {
+  right: 0; }
+.sidebar-right .sidebar-close {
+  left: 0; }
+
+.sidebar-left ~ .sidebar-map {
+  margin-left: 40px; }
+@media (min-width: 768px) {
+  .sidebar-left ~ .sidebar-map {
+    margin-left: 0; } }
+
+.sidebar-right ~ .sidebar-map {
+  margin-right: 40px; }
+@media (min-width: 768px) {
+  .sidebar-right ~ .sidebar-map {
+    margin-right: 0; } }
+
+.sidebar {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.65); }
+.sidebar.leaflet-touch {
+  box-shadow: none;
+  border-right: 2px solid rgba(0, 0, 0, 0.2); }
+@media (min-width: 768px) {
+  .sidebar {
+    border-radius: 4px; }
+  .sidebar.leaflet-touch {
+    border: 2px solid rgba(0, 0, 0, 0.2); } }
+
+@media (min-width: 768px) {
+  .sidebar-left ~ .vue2leaflet-map .leaflet-left {
+    transition: left 500ms; } }
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar-left ~ .vue2leaflet-map .leaflet-left {
+    left: 315px; } }
+
+@media (min-width: 992px) {
+  .sidebar-left ~ .vue2leaflet-map .leaflet-left {
+    left: 400px; } }
+
+@media (min-width: 768px) {
+  .sidebar-left.collapsed ~ .vue2leaflet-map .leaflet-left {
+    left: 50px; } }
+
+@media (min-width: 768px) {
+  .sidebar-right ~ .vue2leaflet-map .leaflet-right {
+    transition: right 500ms; } }
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .sidebar-right ~ .vue2leaflet-map .leaflet-right {
+    right: 315px; } }
+
+@media (min-width: 992px) {
+  .sidebar-right ~ .vue2leaflet-map .leaflet-right {
+    right: 400px; } }
+
+@media (min-width: 768px) {
+  .sidebar-right.collapsed ~ .vue2leaflet-map .leaflet-right {
+    right: 50px; } }
+
+.leaflet-measure-path-measurement {
+  position: absolute;
+  font-size: 12px;
+  color: darkblue;
+  text-shadow: -1px  0 0 white,
+          -1px -1px 0 white,
+          0 -1px 0 white,
+          1px -1px 0 white,
+          1px  0 0 white,
+          1px  1px 0 white,
+          0  1px 0 white,
+          -1px  1px 0 white;
+  white-space: nowrap;
+  transform-origin: 0;
+  pointer-events: none;
+}
+
+.leaflet-measure-path-measurement:last-of-type {
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+  z-index: 1000
+}
+
+.leaflet-measure-path-measurement > div {
+  position: relative;
+  margin-top: -25%;
+  left: -50%;
+}
+
+.marker-cluster-small {
+  background-color: rgba(181, 226, 140, 0.6);
+}
+.marker-cluster-small div {
+  background-color: rgba(110, 204, 57, 0.6);
+}
+
+.marker-cluster-medium {
+  background-color: rgba(241, 211, 87, 0.6);
+}
+.marker-cluster-medium div {
+  background-color: rgba(240, 194, 12, 0.6);
+}
+
+.marker-cluster-large {
+  background-color: rgba(253, 156, 115, 0.6);
+}
+.marker-cluster-large div {
+  background-color: rgba(241, 128, 23, 0.6);
+}
+
+/* IE 6-8 fallback colors */
+.leaflet-oldie .marker-cluster-small {
+  background-color: rgb(181, 226, 140);
+}
+.leaflet-oldie .marker-cluster-small div {
+  background-color: rgb(110, 204, 57);
+}
+
+.leaflet-oldie .marker-cluster-medium {
+  background-color: rgb(241, 211, 87);
+}
+.leaflet-oldie .marker-cluster-medium div {
+  background-color: rgb(240, 194, 12);
+}
+
+.leaflet-oldie .marker-cluster-large {
+  background-color: rgb(253, 156, 115);
+}
+.leaflet-oldie .marker-cluster-large div {
+  background-color: rgb(241, 128, 23);
+}
+
+.marker-cluster {
+  background-clip: padding-box;
+  border-radius: 20px;
+}
+.marker-cluster div {
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  margin-top: 5px;
+
+  text-align: center;
+  border-radius: 15px;
+  font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}
+.marker-cluster span {
+  line-height: 30px;
+}
