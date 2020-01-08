@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <div class="row q-col-gutter-md">
-      <div class="col-sm-12">
+      <div class="col-xs-12">
         <q-card>
           <side-bar>
             <template v-slot:firstPaneTitle>
@@ -159,6 +159,7 @@
                     :url="tileProvider.url"
                     :options="tileProvider.options"
                     :visible="tileProvider.visible"
+                    :attribution="tileProvider.attribution"
                     layer-type="base"/>
             <l-marker
                     :lat-lng="marker.position"
