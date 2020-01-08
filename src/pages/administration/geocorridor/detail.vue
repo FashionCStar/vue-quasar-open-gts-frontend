@@ -1,7 +1,7 @@
 <template>
   <q-page padding>
     <div class="row q-col-gutter-md">
-      <div class="col-sm-12">
+      <div class="col-xs-12">
         <q-card>
           <side-bar>
             <template v-slot:firstPaneTitle>
@@ -74,6 +74,21 @@
           >
             <q-resize-observer @resize="onResize"/>
             <l-control-layers :sort-layers="true" />
+            <l-control position="bottomleft">
+              <div style="width: 230px; border-radius: 10px">
+                <q-toolbar class="bg-indigo-6 text-white rounded-borders">
+                  <q-input dark standout dense
+                           v-model="targetPos"
+                           label="Position" />
+                  <q-btn class="q-ml-sm"
+                         round dense
+                         flat
+                         icon="search"
+                         @click="trackPos"
+                  />
+                </q-toolbar>
+              </div>
+            </l-control>
             <l-tile-layer
                     v-for="tileProvider in tileProviders"
                     :key="tileProvider.name"
@@ -81,6 +96,7 @@
                     :url="tileProvider.url"
                     :options="tileProvider.options"
                     :visible="tileProvider.visible"
+                    :attribution="tileProvider.attribution"
                     layer-type="base"/>
             <l-feature-group>
               <l-polyline
@@ -89,6 +105,7 @@
                       :opacity="0.2"
                       :color="shapeColor"
                       :fillColor="shapeColor"
+                      v-if="vertexMarkers.length > 1"
               />
             </l-feature-group>
             <l-layer-group>
@@ -143,7 +160,7 @@
 <script>
 import { api } from 'src/boot/api'
 import L from 'leaflet'
-import { LMap, LControlLayers, LTileLayer, LLayerGroup, LFeatureGroup, LCircleMarker, LPolyline } from 'vue2-leaflet'
+import { LMap, LControlLayers, LTileLayer, LLayerGroup, LFeatureGroup, LCircleMarker, LPolyline, LControl } from 'vue2-leaflet'
 import Util from 'src/boot/mapUtil'
 import SideBar from '../../../components/SideBar'
 
@@ -152,6 +169,7 @@ export default {
   components: {
     LMap,
     LControlLayers,
+    LControl,
     LTileLayer,
     LLayerGroup,
     LFeatureGroup,
@@ -200,7 +218,8 @@ export default {
       ],
 
       loading: true,
-      curLocation: ''
+      curLocation: '',
+      targetPos: '1.3512, 104.0084'
     }
   },
   created () {
@@ -306,6 +325,14 @@ export default {
     onSubmit () {
       // console.log('CURRRENT POINT', this.curPoint)
     },
+    trackPos () {
+      const pos = this.targetPos.split(',')
+      if (pos.length > 1) {
+        const lat = parseFloat(pos[0])
+        const lng = parseFloat(pos[1])
+        this.$refs.map.mapObject.setView({ lat, lng }, 13)
+      }
+    },
     updateCorridor: async function () {
       const record = {}
       for (let i = 0; i < 10; i++) {
@@ -347,6 +374,7 @@ export default {
           position: 'top',
           message: this.corridorForm.corridorID + ' ' + this.$t(res.data.success, { item: this.$t(res.data.item) })
         })
+        this.$router.push('/corridors')
       } catch (e) {
       }
     },
