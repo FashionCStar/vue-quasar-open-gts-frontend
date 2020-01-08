@@ -54,6 +54,10 @@ export default {
   mounted () {
   },
   methods: {
+    openDevicePane () {
+      this.showDevicePane = true
+      this.showLocationPane = false
+    },
     toggleDevicePane () {
       this.showDevicePane = !this.showDevicePane
       this.showLocationPane = false
