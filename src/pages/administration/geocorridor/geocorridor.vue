@@ -196,6 +196,7 @@ export default {
           pagination: this.pagination,
           filter: this.filter
         })
+        this.goToDetail(this.corridorForm.accountID, this.corridorForm.corridorID)
         this.showNewDialog = false
         this.resetForm()
       } catch (e) {
