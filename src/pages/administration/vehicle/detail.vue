@@ -111,7 +111,34 @@
               <q-input outlined :disable="enableEdit<2 || (editSMSEdit<2)" v-model="vehicleForm.smsEmail" ref="smsEmail" label="SMS Email Address"/>
             </div>
             <div class="col-12 col-sm-6">
-              <q-input outlined :disable="enableEdit<2" v-model="vehicleForm.pushpinID" ref="pushpinID" label="Group Pushpin ID"/>
+              <q-select outlined :disable="enableEdit<2" v-model="vehicleForm.pushpinID"
+                        :options="pushPinList"
+                        :option-value="opt => opt === null ? null : opt.name"
+                        :option-label="opt => opt === null ? '- Null -' : opt.desc"
+                        options-dense
+                        emit-value
+                        map-options
+                        options-cover
+                        transition-show="flip-up"
+                        transition-hide="flip-down"
+                        ref="pushpinID" label="Group Pushpin ID">
+                <template v-slot:option="scope">
+                  <q-item
+                          v-bind="scope.itemProps"
+                          v-on="scope.itemEvents"
+                  >
+                    <q-item-section avatar>
+                      <q-img style="height: 30px;"
+                             :src="scope.opt.image"
+                             contain
+                      />
+                    </q-item-section>
+                    <q-item-section>
+                      <q-item-label>{{ scope.opt.desc }}</q-item-label>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
             </div>
             <div class="col-12 col-sm-6">
               <q-select outlined :disable="enableEdit<2" v-model="vehicleForm.displayColor"
@@ -271,6 +298,7 @@
 import { api } from 'src/boot/api'
 import { LocalStorage } from 'quasar'
 import { permissionChecker } from 'src/boot/checkPermission'
+import Util from 'src/boot/mapUtil'
 
 export default {
   name: 'Detail',
@@ -381,6 +409,7 @@ export default {
           value: '7', desc: '7'
         }
       ],
+      pushPinList: Util.pushpinList,
       groupOptions: [''],
       filteredOptions1: [''],
       vehicleForm: {
