@@ -45,6 +45,10 @@ export default {
   description: 'Description',
 
   // SideBar
+  vehicleDetail: 'Vehicle Detail',
+  groupDetail: 'Group Detail',
+  groupSummary: 'Group Summary',
+  performance: 'Performance',
 
   // Accounts
   accountID: 'Account ID',
