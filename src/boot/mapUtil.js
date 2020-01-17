@@ -464,6 +464,51 @@ const shapeColors = [
   { value: '#ff1493', label: 'Pink' }
 ]
 
+const pushpinList = [
+  { name: '', desc: 'default', isEval: false, image: '', width: 24, height: 0, index: -1 },
+  { name: 'black', desc: 'black', isEval: false, image: 'statics/pp/pin30_black.png', width: 18, height: 30, index: 0 },
+  { name: 'brown', desc: 'brown', isEval: false, image: 'statics/pp/pin30_brown.png', width: 18, height: 30, index: 1 },
+  { name: 'red', desc: 'red', isEval: false, image: 'statics/pp/pin30_red.png', width: 18, height: 30, index: 2 },
+  { name: 'orange', desc: 'orange', isEval: false, image: 'statics/pp/pin30_orange.png', width: 18, height: 30, index: 3 },
+  { name: 'yellow', desc: 'yellow', isEval: false, image: 'statics/pp/pin30_yellow.png', width: 18, height: 30, index: 4 },
+  { name: 'green', desc: 'green', isEval: false, image: 'statics/pp/pin30_green.png', width: 18, height: 30, index: 5 },
+  { name: 'blue', desc: 'blue', isEval: false, image: 'statics/pp/pin30_blue.png', width: 18, height: 30, index: 6 },
+  { name: 'purple', desc: 'purple', isEval: false, image: 'statics/pp/pin30_purple.png', width: 18, height: 30, index: 7 },
+  { name: 'gray', desc: 'gray', isEval: false, image: 'statics/pp/pin30_gray.png', width: 18, height: 30, index: 8 },
+  { name: 'white', desc: 'white', isEval: false, image: 'statics/pp/pin30_white.png', width: 18, height: 30, index: 9 },
+  { name: 'reddot', desc: 'reddot', isEval: false, image: 'statics/pp/pin30_red_dot.png', width: 18, height: 30, index: 10 },
+  { name: 'greendot', desc: 'greendot', isEval: false, image: 'statics/pp/pin30_green_dot.png', width: 18, height: 30, index: 11 },
+  { name: 'bluedot', desc: 'bluedot', isEval: false, image: 'statics/pp/pin30_blue_dot.png', width: 18, height: 30, index: 12 },
+  { name: 'clear', desc: 'clear', isEval: false, image: 'statics/pp/clear16.png', width: 16, height: 16, index: 13 },
+  { name: 'statusCode', desc: 'status Code', isEval: false, image: 'statics/pp/pin30_yellow.png', width: 18, height: 30, index: 14 },
+  { name: 'greenh', desc: 'greenh', isEval: true, image: 'statics/pp/pin30_green_h1.png', width: 18, height: 30, index: 15 },
+  { name: 'yellowh', desc: 'yellowh', isEval: true, image: 'statics/pp/pin30_yellow_h1.png', width: 18, height: 30, index: 16 },
+  { name: 'heading', desc: 'heading', isEval: true, image: 'statics/pp/pin30_green_h1.png', width: 18, height: 30, index: 17 },
+  { name: 'heading_eu', desc: 'heading  eu', isEval: true, image: 'statics/pp/pin30_green_h1.png', width: 18, height: 30, index: 18 },
+  { name: 'heading_ca', desc: 'heading  ca', isEval: true, image: 'statics/pp/pin30_green_h1.png', width: 18, height: 30, index: 19 },
+  { name: 'head_clear', desc: 'head  clear', isEval: false, image: 'statics/pp/clear16.png', width: 16, height: 16, index: 20 },
+  { name: 'last', desc: 'last', isEval: true, image: 'statics/pp/CrosshairRed.gif', width: 18, height: 30, index: 21 },
+  { name: 'lastlabel', desc: 'lastlabel', isEval: true, image: 'statics/pp/label47_fill.png', width: 47, height: 24, index: 22 },
+  { name: 'lastage', desc: 'lastage', isEval: true, image: 'statics/pp/CrosshairRed.gif', width: 18, height: 30, index: 23 },
+  { name: 'devlabel', desc: 'devlabel', isEval: true, image: 'statics/pp/label47_fill.png', width: 47, height: 24, index: 24 },
+  { name: 'devlbl_r', desc: 'devlbl  r', isEval: true, image: 'statics/pp/label47_fill_red.png', width: 47, height: 24, index: 25 },
+  { name: 'devlbl_g', desc: 'devlbl  g', isEval: true, image: 'statics/pp/label47_fill_green.png', width: 47, height: 24, index: 26 },
+  { name: 'devlbl_b', desc: 'devlbl  b', isEval: true, image: 'statics/pp/label47_fill_blue.png', width: 47, height: 24, index: 27 },
+  { name: 'devlbl_y', desc: 'devlbl  y', isEval: true, image: 'statics/pp/label47_fill_yellow.png', width: 47, height: 24, index: 28 },
+  { name: 'devlabel2', desc: 'devlabel 2', isEval: true, image: 'statics/pp/label67_fill.png', width: 67, height: 24, index: 29 },
+  { name: 'sp_slow', desc: 'sp  slow', isEval: true, image: 'statics/pp/label47_fill_green.png', width: 47, height: 24, index: 30 },
+  { name: 'sp_moving', desc: 'sp  moving', isEval: true, image: 'statics/pp/label47_fill_green.png', width: 47, height: 24, index: 31 },
+  { name: 'sp_greenh', desc: 'sp  greenh', isEval: true, image: 'statics/pp/label47_fill_green.png', width: 47, height: 24, index: 32 },
+  { name: 'sp_yellowh', desc: 'sp  yellowh', isEval: true, image: 'statics/pp/label47_fill_green.png', width: 47, height: 24, index: 33 },
+  { name: 'sp_heading', desc: 'sp  heading', isEval: true, image: 'statics/pp/label47_fill_green.png', width: 47, height: 24, index: 34 },
+  { name: 'pp_arrow_c', desc: 'pp  arrow  c', isEval: true, image: 'statics/pp/pin30_cyan_arrow.png', width: 18, height: 30, index: 35 },
+  { name: 'pp_arrow_y', desc: 'pp  arrow  y', isEval: true, image: 'statics/pp/pin30_yellow_arrow.png', width: 18, height: 30, index: 36 },
+  { name: 'arrow_spd', desc: 'arrow  spd', isEval: true, image: 'statics/pp/arrow_red.png', width: 20, height: 20, index: 37 },
+  { name: 'arrow_grn', desc: 'arrow  grn', isEval: true, image: 'statics/pp/arrow_green.png', width: 20, height: 20, index: 38 },
+  { name: 'indexed', desc: 'indexed', isEval: true, image: 'statics/pp/pin30_blue_fill.png', width: 18, height: 30, index: 39 },
+  { name: 'custom', desc: 'custom', isEval: true, image: 'statics/pin30_green_h1.png', width: 18, height: 30, index: 40 }
+]
+
 import { date } from 'quasar'
 
 export default {
@@ -472,7 +517,7 @@ export default {
     const offset = showTimeZone ? timeOffset : 0
 
     const timeStamp = new Date((val + offset) * 1000)
-    return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+    return date.formatDate(timeStamp, 'DD/MM/YYYY HH:mm:ss')
   },
   getStatusCode: function (code) {
     return statusCodes.find(el => el.code === code).desc
@@ -481,7 +526,132 @@ export default {
   getCompass: function (heading) {
     return HEADING[Math.round(heading / 45.0) % 8]
   },
+  getMarkerIcon: function (e) {
+    const pushpinID = e.pushpinID
+    console.log('GET ICON', pushpinID)
 
+    if (pushpinID === '' || pushpinID === null || pushpinID === 'statusCode' || pushpinID === 'heading' ||
+        pushpinID === 'heading_eu' || pushpinID === 'heading_ca') {
+      return {
+        iconUrl: this.getHeadingMarkerURL(e),
+        iconSize: [18, 30],
+        iconOffset: [9, 30]
+      }
+    }
+
+    const pushPinImg = 'statics/pp/pin30'
+    const x = Math.round(e.heading / 45.0) % 8
+    const text = e.displayName ? e.displayName : e.deviceID
+    const color = this.getSpeedColor(e.speedKPH)
+
+    let iconUrl = ''
+    let iconSize = [18, 30]
+    let iconOffset = [9, 30]
+    let iconHeight = 30
+    switch (pushpinID) {
+      case 'black':
+      case 'brown':
+      case 'red':
+      case 'orange':
+      case 'yellow':
+      case 'green':
+      case 'blue':
+      case 'purple':
+      case 'gray':
+      case 'white':
+        iconUrl = pushPinImg + '_' + pushpinID + '.png'
+        break
+      case 'reddot':
+        iconUrl = pushPinImg + '_red_dot.png'
+        break
+      case 'greendot':
+        iconUrl = pushPinImg + '_green_dot.png'
+        break
+      case 'bluedot':
+        iconUrl = pushPinImg + '_blue_dot.png'
+        break
+      case 'clear':
+      case 'head_clear':
+        iconUrl = 'statics/pp/clear16.png'
+        iconOffset = [8, 16]
+        break
+      case 'greenh':
+        iconUrl = pushPinImg + '_green_h' + x + '.png'
+        break
+      case 'yellowh':
+        iconUrl = pushPinImg + '_yellow_h' + x + '.png'
+        break
+      case 'last':
+      case 'lastage':
+        iconUrl = pushPinImg + '/CrosshairRed.gif'
+        break
+      case 'lastlabel':
+      case 'devlabel':
+      case 'devlabel2':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|FFFFFF|000000'
+        iconOffset = [0, 30]
+        break
+      case 'devlbl_r':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|FF8888|000000'
+        iconOffset = [0, 30]
+        break
+      case 'devlbl_g':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|88FF88|000000'
+        iconOffset = [0, 30]
+        break
+      case 'devlbl_b':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|8888FF|000000'
+        iconOffset = [0, 30]
+        break
+      case 'devlbl_y':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|FFFF88|000000'
+        iconOffset = [0, 30]
+        break
+      case 'sp_slow':
+      case 'sp_moving':
+      case 'sp_greenh':
+      case 'sp_yellowh':
+      case 'sp_heading':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|' + color + '|000000'
+        iconOffset = [0, 30]
+        break
+      case 'pp_arrow_c':
+        iconUrl = pushPinImg + '_cyan.png'
+        break
+      case 'pp_arrow_y':
+        iconUrl = pushPinImg + '_yellow.png'
+        break
+      case 'arrow_spd':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|FFFF88|000000'
+        iconOffset = [10, 10]
+        iconHeight = 20
+        break
+      case 'arrow_grn':
+        iconUrl = 'https://chart.googleapis.com/chart?chst=d_bubble_text_small&chld=bb|' + text + '|FFFF88|000000'
+        iconOffset = [10, 10]
+        iconHeight = 20
+        break
+      default:
+        iconUrl = pushPinImg + '_red.png'
+    }
+
+    const iconInfo = {
+      iconUrl: iconUrl,
+      iconSize: iconSize,
+      iconOffset: iconOffset,
+      iconHeight,
+      pushpin: pushpinID,
+      heading: e.heading
+    }
+
+    const arrowColor = pushpinID === 'arrow_spd' ? 'red' : pushpinID === 'arrow_grn' ? '88FF88' : ''
+
+    if (arrowColor) {
+      iconInfo.color = arrowColor
+    }
+
+    return iconInfo
+  },
   getHeadingMarkerURL: function (e) {
     const pushPinImg = 'statics/pp/pin30' // "extra/images/pp/circle"
     // if ((MAX_CREATION_AGE_SEC > 0) && (e.createAge > MAX_CREATION_AGE_SEC)) {
@@ -514,6 +684,15 @@ export default {
       return pushPinImg + '_green_h' + x + '.png'
     }
   },
+  getSpeedColor: function (val) {
+    if (val <= 5.0) {
+      return 'FF8888'
+    } else if (val < 32.0) {
+      return 'FFFF88'
+    } else {
+      return '88FF88'
+    }
+  },
   getMarkerInfo (d, tmz) {
     const TEXT_INFO_DATE = 'Date'
     const TEXT_INFO_GPS = 'GPS'
@@ -525,6 +704,7 @@ export default {
     const TEXT_INFO_ADDR = 'Address'
 
     const dev = d.deviceID.toUpperCase()
+    const shortname = d.displayName ? ' (' + d.displayName.toUpperCase() + ')' : ''
     const flat = d.latitude.toFixed(5)
     const flon = d.longitude.toFixed(5)
     const dtime = this.convertTimestamp(d.timestamp, tmz, true)
@@ -543,11 +723,14 @@ export default {
       gpsStr = '[' + gpsStr + ']'
     }
 
+    let posLink = '<a href="https://maps.google.com/?q=' + parseFloat(flat) + ',' + parseFloat(flon) + '" target="_blank">'
+    posLink += flat + ' / ' + flon + '</a>'
+
     let str = ''
-    str += "<table class='infoBoxTable' cellspacing='1' cellpadding='1' border='0'>"
-    str += "<tr class='infoBoxRow'><td class='infoBoxCell'>[#" + d.id + '] &nbsp; <b>' + dev + ' : ' + code + '</b></td></tr>'
+    str += "<table class='infoBoxTable' cellspacing='1' cellpadding='1' border='0' style='width: 350px'>"
+    str += "<tr class='infoBoxRow'><td class='infoBoxCell'>[#" + d.id + '] &nbsp; <b>' + dev + shortname + ' : ' + code + '</b></td></tr>'
     str += "<tr class='infoBoxRow'><td class='infoBoxCell'><b>" + TEXT_INFO_DATE + ':</b> ' + dtime + ' [' + tmz + ']</td></tr>'
-    str += "<tr class='infoBoxRow'><td class='infoBoxCell'><b>" + TEXT_INFO_GPS + ':</b> ' + flat + ' / ' + flon + ' ' + gpsStr + '</td></tr>'
+    str += "<tr class='infoBoxRow'><td class='infoBoxCell'><b>" + TEXT_INFO_GPS + ':</b> ' + posLink + ' ' + gpsStr + '</td></tr>'
     str += "<tr class='infoBoxRow'><td class='infoBoxCell'><b>" + TEXT_INFO_SPEED + ':</b> ' + spdfmt + '</td></tr>'
     if (d.speedKPH > 0) {
       const head = d.heading.toFixed(0) + '&deg; &nbsp;(' + compass + ')'
@@ -563,5 +746,6 @@ export default {
   timeZoneList,
   arrivalCodes,
   departureCodes,
-  shapeColors
+  shapeColors,
+  pushpinList
 }
