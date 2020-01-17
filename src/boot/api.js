@@ -126,6 +126,9 @@ class RestApi {
   getZones (params) {
     return this.instance.post('/zone/zones', params)
   }
+  getZonesByAccount (params) {
+    return this.instance.post('/zone/account', params)
+  }
   getZoneByID (params) {
     return this.instance.post('/zone/detail', params)
   }
@@ -144,6 +147,9 @@ class RestApi {
 
   getCorridors (params) {
     return this.instance.post('/corridor/corridors', params)
+  }
+  getCorridorsByAccount (params) {
+    return this.instance.post('/corridor/account', params)
   }
   getCorridorByID (params) {
     return this.instance.post('/corridor/detail', params)
