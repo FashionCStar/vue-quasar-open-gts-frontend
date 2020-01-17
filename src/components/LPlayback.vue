@@ -8,16 +8,20 @@
       <q-separator vertical inset />
       <div style="width: 210px; flex-shrink: 0">
         <q-input stack-label borderless
-                 v-model="currentTimeString"
+                 v-model="playbackTime"
                  dense readonly
                  label="Current Time"
                  class="q-mx-sm"
         >
           <template v-slot:prepend>
             <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy transition-show="scale" transition-hide="scale">
+              <q-popup-proxy transition-show="scale"
+                             transition-hide="scale"
+                             @before-show="showCalender"
+                             ref="datePicker"
+              >
                 <q-date v-model="currentTimeString"
-                        mask="DD/MM/YYYY HH:mm:ss"
+                        mask="YYYY-MM-DD HH:mm:ss"
                         @input="val => setCursor(val)" />
               </q-popup-proxy>
             </q-icon>
@@ -27,7 +31,7 @@
             <q-icon name="access_time" class="cursor-pointer">
               <q-popup-proxy transition-show="scale" transition-hide="scale">
                 <q-time v-model="currentTimeString"
-                        mask="DD/MM/YYYY HH:mm:ss"
+                        mask="YYYY-MM-DD HH:mm:ss"
                         format24h with-seconds
                         @input="val => setCursor(val)"/>
               </q-popup-proxy>
@@ -108,6 +112,10 @@ export default {
     useSlider: {
       type: Boolean,
       default: true
+    },
+    toggleSidebarCalender: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -121,6 +129,7 @@ export default {
       startTime: 0,
       endTime: 250,
       currentTimeString: '2019-02-28 08:23:58',
+      playbackTime: '28/02/2019 08:23:58',
 
       ticks: [],
       playbackInterval: null,
@@ -163,7 +172,10 @@ export default {
     this.mapObject.setElement(this.$el)
 
     const now = new Date()
-    this.currentTimeString = date.formatDate(now, 'DD/MM/YYYY HH:mm:ss')
+    this.currentTime = now.getTime() / 1000
+    this.startTime = this.currentTime
+    this.endTime = this.currentTime
+    this.currentTimeString = date.formatDate(now, 'YYYY-MM-DD HH:mm:ss')
 
     if (this.disableClickPropagation) {
       DomEvent.disableClickPropagation(this.$el)
@@ -293,8 +305,11 @@ export default {
       this.playbackInterval = null
     },
     tick () {
-      if (this.currentTime > this.endTime) {
+      if (this.currentTime >= this.endTime) {
         clearInterval(this.playbackInterval)
+        this.playbackInterval = null
+        this.isPlaying = false
+        return
       }
       if (this.currentTime < this.startTime) {
         this.currentTime = this.startTime
@@ -331,6 +346,13 @@ export default {
       this.moveSlider()
       this.$emit('update:boundTime', timeStamp)
     },
+    setTimestamp: function (timeStamp) {
+      const mod = timeStamp % this.tickLen
+      if (mod !== 0) {
+        timeStamp += this.tickLen - mod
+      }
+      this.currentTime = timeStamp
+    },
     setSpeed (speed) {
       this.speed = speed
       this.transitionTime = 250 / this.speed
@@ -342,7 +364,14 @@ export default {
     updateTime () {
       const timeOffset = Util.timeZoneList.find(zone => zone.desc === this.timeZone).offset
       const timeStamp = new Date((this.currentTime + timeOffset) * 1000)
-      this.currentTimeString = date.formatDate(timeStamp, 'DD/MM/YYYY HH:mm:ss')
+      this.currentTimeString = date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+      this.playbackTime = date.formatDate(timeStamp, 'DD/MM/YYYY HH:mm:ss')
+    },
+    showCalender (e) {
+      this.$emit('toggle:datePicker')
+      if (this.toggleSidebarCalender) {
+        this.$refs.datePicker.hide()
+      }
     }
   }
 }
@@ -350,7 +379,7 @@ export default {
 
 <style scoped>
   .leaflet-playback-control {
-    margin-left: 20px;
+    margin-left: 10px;
     width: 600px;
   }
 </style>

@@ -28,7 +28,7 @@
             <q-list>
               <q-item v-if="showProfile" clickable v-close-popup @click="gotoPage((userID?'/users/':'/accounts/')+(userID ? userAccountID+'/'+userID : accountID)+'/detail')">
                 <q-item-section avatar>
-                  <q-avatar icon="far fa-user-circle" text-color="black" />
+                  <q-avatar icon="fas fa-id-badge" text-color="text-grey" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>My Profile</q-item-label>
@@ -37,7 +37,7 @@
 
               <q-item clickable v-close-popup @click="Logout">
                 <q-item-section avatar>
-                  <q-avatar icon="logout" text-color="black" />
+                  <q-avatar icon="fas fa-sign-out-alt" text-color="text-grey" />
                 </q-item-section>
                 <q-item-section>
                   <q-item-label>Logout</q-item-label>
@@ -66,7 +66,7 @@
       overlay
       @mouseover="miniNavDrawerState = false"
       @mouseout="miniNavDrawerState = false"
-      :width="250"
+      :width="200"
       :breakpoint="500"
       show-if-above
       bordered
@@ -77,7 +77,7 @@
           <q-item clickable
                   @click="gotoPage('/index')" >
             <q-item-section avatar>
-              <q-icon name="home" color="primary"></q-icon>
+              <q-icon name="fas fa-home" color="grey-9"/>
             </q-item-section>
 
             <q-item-section>
@@ -90,10 +90,11 @@
                   :key="menuItem.title"
                   expand-icon="keyboard_arrow_down"
                   v-show="menuAccessable(menuItem.meta.roles)"
+                  :content-inset-level="0.5"
           >
             <template v-slot:header>
               <q-item-section avatar>
-                <q-icon :name="menuItem.icon" color="primary"/>
+                <q-icon :name="menuItem.icon" color="grey-9"/>
               </q-item-section>
 
               <q-item-section>
@@ -108,10 +109,9 @@
                     clickable
                     v-ripple
                     @click="gotoPage(route.to)"
-                    :inset-level="1"
             >
               <q-item-section avatar>
-                  <img :src="'statics/img/' + route.image + '.png'" width="40px" alt=""/>
+                <q-icon :name="route.icon" color="grey-9"/>
               </q-item-section>
 
               <q-item-section>
@@ -123,7 +123,7 @@
           <q-item clickable
                   @click="Logout" >
             <q-item-section avatar>
-              <q-icon name="power_settings_new" color="primary"></q-icon>
+              <q-icon name="fas fa-sign-out-alt" color="grey-9" />
             </q-item-section>
 
             <q-item-section>
@@ -186,131 +186,125 @@ export default {
         //   meta: { roles: ['admin', 'account'] }
         // },
         {
-          icon: 'map',
+          icon: 'fas fa-map',
           title: 'mapping',
           to: '/index',
           meta: { roles: ['admin', 'account'] },
           routes: [
             {
-              image: 'iDeviceMap',
+              icon: 'fas fa-map-marked-alt',
               title: 'lastLocation',
               to: '/lastlocation',
               meta: { roles: [ 'admin' ] }
             },
             {
-              image: 'iDeviceMap',
+              icon: 'fas fa-route',
               title: 'vehicle',
               to: '/devicelocation',
               meta: { roles: [ 'admin', 'account' ] }
             },
             {
-              image: 'iFleetMap',
+              icon: 'fas fa-map-marked-alt',
               title: 'group',
               to: '/grouplocation',
               meta: { roles: [ 'admin', 'account' ] }
             }
           ]
         },
-        // {
-        //   icon: 'receipt',
-        //   title: 'Reports',
-        //   to: '/index',
-        //   meta: { roles: ['admin', 'account'] },
-        //   routes: [
-        //     {
-        //       icon: 'people',
-        //       title: 'accounts',
-        //       to: '/accounts',
-        //       meta: { roles: [ 'admin' ] }
-        //     },
-        //     {
-        //       icon: 'people',
-        //       title: 'users',
-        //       to: '/users',
-        //       meta: { roles: [ 'admin', 'account' ] }
-        //     },
-        //     {
-        //       icon: 'settings',
-        //       title: 'vehicles',
-        //       to: '/vehicles',
-        //       meta: {}
-        //     },
-        //     {
-        //       icon: 'list',
-        //       title: 'vehicleGroups',
-        //       to: '/groups',
-        //       meta: {}
-        //     },
-        //     {
-        //       icon: 'people',
-        //       title: 'drivers',
-        //       to: '/drivers',
-        //       meta: {}
-        //     }
-        //   ]
-        // },
         {
-          icon: 'people',
+          icon: 'fas fa-list-alt',
+          title: 'Reports',
+          to: '/index',
+          meta: { roles: ['admin', 'account'] },
+          routes: [
+            // {
+            //   icon: 'far fa-chart-bar',
+            //   title: 'vehicleDetail',
+            //   to: '/accounts',
+            //   meta: { roles: [ 'admin' ] }
+            // },
+            // {
+            //   icon: 'fas fa-chart-bar',
+            //   title: 'groupDetail',
+            //   to: '/users',
+            //   meta: { roles: [ 'admin', 'account' ] }
+            // },
+            // {
+            //   icon: 'fas fa-chart-pie',
+            //   title: 'groupSummary',
+            //   to: '/vehicles',
+            //   meta: {}
+            // },
+            // {
+            //   icon: 'fas fa-poll',
+            //   title: 'performance',
+            //   to: '/groups',
+            //   meta: {}
+            // }
+          ]
+        },
+        {
+          icon: 'fas fa-users-cog',
           title: 'administration',
           to: '/index',
           meta: { roles: ['admin', 'account', 'user'] },
           routes: [
             {
-              image: 'iAccountAdmin',
+              icon: 'fas fa-user-shield',
               title: 'account',
               to: '/accounts',
               meta: { roles: [ 'admin' ] }
             },
             {
-              image: 'iUserAdmin',
+              icon: 'fas fa-user-cog',
               title: 'user',
               to: '/users',
               meta: { roles: [ 'admin', 'account' ] }
             },
             {
-              image: 'iRoleAdmin',
+              icon: 'fas fa-user-tag',
               title: 'role',
               to: '/roles',
               meta: { roles: [ 'admin' ] }
             },
             {
-              image: 'iDeviceAdmin',
+              icon: 'fas fa-car',
               title: 'vehicle',
               to: '/vehicles',
               meta: {}
             },
             {
-              image: 'iFleetAdmin',
+              icon: 'fas fa-users',
               title: 'group',
               to: '/groups',
               meta: {}
             },
             {
-              image: 'iDriverAdmin',
+              icon: 'fas fa-user-tie',
               title: 'driver',
               to: '/drivers',
               meta: {}
             },
             {
-              image: 'iZoneAdmin',
+              icon: 'fas fa-draw-polygon',
               title: 'geozone',
               to: '/zones',
               meta: {}
             },
             {
-              image: 'iZoneAdmin',
+              icon: 'fa fa-road',
               title: 'geocorridor',
               to: '/corridors',
               meta: {}
             },
             {
-              image: 'iRuleAdmin',
+              icon: 'fas fa-code-branch',
               title: 'rule',
               to: '/rules',
               meta: {}
             },
             {
-              image: 'iStatusCodeAdmin',
+              icon: 'fas fa-info-circle',
               title: 'statusCode',
               to: '/statuscodes',
               meta: {}
@@ -366,7 +360,7 @@ export default {
       }
     },
     isLeftNavOpen (state) {
-      return state ? '250px' : '0px'
+      return state ? '200px' : '0px'
     },
     gotoPage (url) {
       if (this.$router.currentRoute.path !== url) {
