@@ -531,6 +531,7 @@ export default {
           position: 'top',
           message: this.zoneForm.geozoneID + ' ' + this.$t(res.data.success, { item: this.$t(res.data.item) })
         })
+        this.$router.push('/zones')
       } catch (e) {
       }
     },
