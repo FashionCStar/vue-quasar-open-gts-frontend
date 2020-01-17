@@ -35,6 +35,26 @@
                     </q-item>
                   </template>
                 </q-select>
+                <q-input filled stack-label
+                         v-model="lastTimeString"
+                         label="To"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="event" class="cursor-pointer">
+                      <q-popup-proxy transition-show="scale" transition-hide="scale">
+                        <q-date v-model="lastTime" mask="YYYY-MM-DD HH:mm" />
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+
+                  <template v-slot:append>
+                    <q-icon name="access_time" class="cursor-pointer">
+                      <q-popup-proxy transition-show="scale" transition-hide="scale">
+                        <q-time v-model="lastTime" mask="YYYY-MM-DD HH:mm" format24h with-seconds/>
+                      </q-popup-proxy>
+                    </q-icon>
+                  </template>
+                </q-input>
                 <q-select outlined v-model="timeZone"
                           :options="timeZoneList"
                           :option-value="opt => opt === null ? null : opt.value"
@@ -51,9 +71,11 @@
                 />
                 <q-separator class="q-pt-none q-mt-sm"/>
                 <div class="text-center q-pt-none">
-                  <q-btn class="q-mt-sm" label="Update" color="primary" glossy @click="updateMap" />
-                  <!--                  <q-btn class="q-mt-sm q-ml-sm" label="Last" color="primary" glossy type="submit" />-->
-                  <!--                  <q-btn class="q-mt-sm q-ml-sm" label="Auto" color="primary" glossy type="reset"/>-->
+                  <q-btn class="q-mt-sm" label="Update" color="primary" glossy @click="getLastEvents" />
+<!--                  <q-btn class="q-mt-sm q-ml-sm"-->
+<!--                         :label="autoUpdate ? 'Stop : ' + remainTime: 'Auto'"-->
+<!--                         color="primary" glossy-->
+<!--                         @click="toggleAutoUpdate"/>-->
                 </div>
                 <q-separator class="q-pt-none q-mt-sm"/>
                 <q-field class="q-pt-none" label="Cursor Location" stack-label >
@@ -64,54 +86,62 @@
               </div>
             </template>
             <template v-slot:secondPaneTitle>
-              Location Info
+              {{ groupID }} Group Info
             </template>
             <template v-slot:locationPane>
               <div class="q-pa-sm">
-                <q-table
-                        title="Location Details"
-                        dense flat
-                        :data="locationData"
-                        :columns="columns"
-                        :pagination.sync="pagination"
-                        :card-style="{backgroundColor: 'rgba(0, 0, 0, 0)'}" >
-                  <template v-slot:header="props">
-                    <q-tr :props="props">
-                      <q-th :props="col.props" v-for="(col, index) in props.cols" :key="index" :align="col.align" style="font-size: 12px">{{col.label}}</q-th>
-                    </q-tr>
-                  </template>
-                  <template v-slot:body="props">
-                    <q-tr>
-                      <q-td key="number" :props="props" style="font-size: 12px; text-decoration: underline; cursor: pointer"
-                            @click="showToolTip(props.row)"> {{ props.row.id }} </q-td>
-                      <q-td key="time" :props="props" style="font-size: 12px">{{ convertTimestamp(props.row.timestamp) }}</q-td>
-                      <q-td key="status" :props="props" style="font-size: 12px">{{ getStatusCode(props.row.statusCode) }}</q-td>
-                      <q-td key="position" :props="props" style="font-size: 12px">{{ `${props.row.latitude.toFixed(4)}/${props.row.longitude.toFixed(4)}` }}</q-td>
-                      <q-td key="speed" :props="props" style="font-size: 12px">{{ props.row.speedKPH.toFixed(1) }}</q-td>
-                      <q-td key="heading" :props="props" style="font-size: 12px">{{ props.row.heading }}</q-td>
-                      <q-td key="address" :props="props" style="font-size: 12px">{{ props.row.address }}</q-td>
-                    </q-tr>
-                  </template>
-                </q-table>
-<!--                <q-btn class="q-mt-md full-width bg-white shadow-2 text-primary" label="Location Detail" @click="showLocations = true"/>-->
+                <q-list  v-for="(event, index) in locationData"
+                         :key="'event' + index">
+                  <q-item clickable
+                          @click="showToolTip(event, index)"
+                  >
+                    <q-item-section top>
+                      <q-item-label class="text-weight-medium">{{ getDeviceID(event) }}</q-item-label>
+                      <q-item-label>{{ convertTimestamp(event.timestamp) }}</q-item-label>
+                      <q-item-label v-html="getStreetViewLink(event)" />
+                      <q-item-label caption>{{ event.address }}</q-item-label>
+                    </q-item-section>
+
+                    <q-item-section side>
+                      <q-item-label class="text-weight-medium">{{ getStatusCode(event.statusCode) }}</q-item-label>
+                      <q-item-label caption>{{ event.speedKPH.toFixed(1) + ' KM/h'}}</q-item-label>
+                      <q-item-label caption>{{ event.heading + '&deg;' }}</q-item-label>
+                      <q-btn class="q-mt-sm" round color="brown-5" glossy icon="directions_car" @click="showVehicleMap(event)"/>
+                    </q-item-section>
+                  </q-item>
+
+                  <q-separator spaced inset />
+                </q-list>
               </div>
             </template>
           </side-bar>
           <l-map style="height: calc(100vh - 125px); cursor: crosshair"
                  :zoom.sync="zoom"
                  :bounds="bounds"
-                 :center="center"
+                 :center.sync="center"
                  ref="map"
                  @baselayerchange="updateMapBounds"
                  @mousemove="getCursorLocation"
-                 @zoomend="updateMeasurement"
           >
             <q-resize-observer @resize="onResize"/>
             <l-control position="bottomright">
-              <q-btn color="primary"
-                     round
-                     :icon="isClustering ? 'bubble_chart' : 'group_work'"
-                     @click="changeClusterMode" />
+              <div style="display: flex; flex-direction: column; font-family: 'Roboto', '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+                <q-btn color="primary"
+                       round glossy
+                       :icon="autoUpdate ? '' : 'fas fa-hourglass-half'"
+                       :label="autoUpdate ? remainTime : ''"
+                       @click="toggleAutoUpdate" />
+                <q-btn class="q-mt-sm"
+                       round glossy
+                       :color="overlayZones? 'primary' : 'grey'"
+                       icon="fas fa-draw-polygon"
+                       @click="toggleOverlayZones" />
+                <q-btn class="q-mt-sm"
+                       color="primary"
+                       round glossy
+                       :icon="isClustering ? 'bubble_chart' : 'group_work'"
+                       @click="changeClusterMode" />
+              </div>
             </l-control>
             <l-control-layers :sort-layers="true" />
             <l-tile-layer
@@ -123,15 +153,76 @@
                     :visible="tileProvider.visible"
                     :attribution="tileProvider.attribution"
                     layer-type="base"/>
+            <l-layer-group>
+              <l-circle
+                      v-for="(radiusZone, i) in radiusZones"
+                      :key="'radiusZone' + i"
+                      :lat-lng="radiusZone.latlngs[0]"
+                      :radius="radiusZone.radius"
+                      :weight="1"
+                      :opacity="0.8"
+                      :color="shapeColor"
+                      :fillColor="shapeColor"
+                      :visible="overlayZones">
+                <l-tooltip
+                  :content="radiusZone.label"
+                  :options="{ permanent: true, direction: 'center' }"
+                />
+              </l-circle>
+              <l-polyline
+                      v-for="(polylineZone, i) in polylineZones"
+                      :key="'polylineZone' + i"
+                      :lat-lngs="polylineZone.latlngs"
+                      :weight="Math.round(getRadiusPixel(polylineZone.radius)) * 2"
+                      :opacity="0.4"
+                      :lineCap="'butt'"
+                      :color="shapeColor"
+                      :fillColor="shapeColor"
+                      :visible="overlayZones">
+                <l-tooltip
+                  :content="polylineZone.label"
+                  :options="{ permanent: true, direction: 'center' }"
+                />
+              </l-polyline>
+              <l-polygon
+                      v-for="(polygonZone, i) in polygonZones"
+                      :key="'polygonZone' + i"
+                      :lat-lngs="polygonZone.latlngs"
+                      :visible="overlayZones"
+                      :weight="1"
+                      :color="shapeColor"
+                      :fillColor="shapeColor">
+                <l-tooltip
+                  :content="polygonZone.label"
+                  :options="{ permanent: true, direction: 'center' }"
+                />
+              </l-polygon>
+            </l-layer-group>
             <l-marker
                     v-for="(marker, index) in markers"
-                    :key="index"
+                    :key="'clusterMarker' + index"
                     :lat-lng="marker"
                     :visible="!isClustering"
+                    ref="marker1"
             >
+              <l-icon
+                      :icon-anchor="marker.icon.iconOffset"
+                      class-name="someExtraClass">
+                <img :src="marker.icon.iconUrl" :height="marker.icon.iconHeight" v-if="marker.icon.pushpin !== 'arrow_spd' && marker.icon.pushpin !== 'arrow_grn'"/>
+                <svg height="20" width="20" :style="'transform: rotate(' + marker.icon.heading + 'deg)'" v-else>
+                  <polygon points="10,2 2,18 10,14 18,18" style="fill:red;stroke:black;stroke-width:1" v-if="marker.icon.color === 'red'"/>
+                  <polygon points="10,2 2,18 10,14 18,18" style="fill:#88FF88;stroke:black;stroke-width:1" v-else/>
+                </svg>
+                <svg height="10" width="10" :style="'transform: rotate(' + marker.icon.heading + 'deg); position: absolute; top: 3px; left: 4px'"
+                     v-if="marker.icon.pushpin === 'pp_arrow_c' || marker.icon.pushpin === 'pp_arrow_y'">
+                  <polygon points="5,0 0,10 5,8 10,10" style="fill:black;stroke-width:1"/>
+                </svg>
+              </l-icon>
               <l-tooltip
                       :content.sync="marker.info"
-                      :options="{ permanent: true, direction: 'top' }"
+                      :options="{
+                          direction: 'bottom',
+                          className: 'leaflet-tooltip-rounded-border' }"
               />
             </l-marker>
             <l-marker-cluster
@@ -141,23 +232,32 @@
             >
               <l-marker
                       v-for="(marker, index) in markers"
-                      :key="index"
+                      :key="'simpleMarker' + index"
                       :lat-lng="marker"
                       :visible="isClustering"
+                      ref="marker2"
               >
+                <l-icon
+                        :icon-anchor="marker.icon.iconOffset"
+                        class-name="someExtraClass">
+                  <img :src="marker.icon.iconUrl" :height="marker.icon.iconHeight" v-if="marker.icon.pushpin !== 'arrow_spd' && marker.icon.pushpin !== 'arrow_grn'"/>
+                  <svg height="20" width="20" :style="'transform: rotate(' + marker.icon.heading + 'deg)'" v-else>
+                    <polygon points="10,2 2,18 10,14 18,18" style="fill:red;stroke:black;stroke-width:1" v-if="marker.icon.color === 'red'"/>
+                    <polygon points="10,2 2,18 10,14 18,18" style="fill:#88FF88;stroke:black;stroke-width:1" v-else/>
+                  </svg>
+                  <svg height="10" width="10" :style="'transform: rotate(' + marker.icon.heading + 'deg); position: absolute; top: 3px; left: 4px'"
+                       v-if="marker.icon.pushpin === 'pp_arrow_c' || marker.icon.pushpin === 'pp_arrow_y'">
+                    <polygon points="5,0 0,10 5,8 10,10" style="fill:black;stroke-width:1"/>
+                  </svg>
+                </l-icon>
                 <l-tooltip
                         :content.sync="marker.info"
-                        :options="{ permanent: true, direction: 'top' }"
+                        :options="{
+                          direction: 'bottom',
+                          className: 'leaflet-tooltip-rounded-border' }"
                 />
               </l-marker>
             </l-marker-cluster>
-            <l-playback
-                    :track-data="trackData"
-                    :time-zone="timeZone"
-                    :is-playback="isPlayback"
-                    :use-slider="false"
-                    @update:boundTime="updateMarker"
-            />
           </l-map>
         </q-card>
       </div>
@@ -172,10 +272,9 @@
 
 import { api } from 'src/boot/api'
 import { LocalStorage, date } from 'quasar'
-import { latLng } from 'leaflet'
-import { LMap, LControlLayers, LTileLayer, LMarker, LTooltip, LControl } from 'vue2-leaflet'
+import L, { latLng } from 'leaflet'
+import { LMap, LControlLayers, LTileLayer, LLayerGroup, LMarker, LCircle, LPolyline, LPolygon, LIcon, LTooltip, LControl } from 'vue2-leaflet'
 import SideBar from '../../../components/SideBar'
-import LPlayback from '../../../components/LPlayback'
 import Vue2LeafletMarkerCluster from 'vue2-leaflet-markercluster'
 import Util from 'src/boot/mapUtil'
 
@@ -186,16 +285,17 @@ export default {
     LControlLayers,
     LControl,
     LTileLayer,
-    // LLayerGroup,
-    // LPolyline,
+    LLayerGroup,
+    LCircle,
+    LPolyline,
+    LPolygon,
     LMarker,
+    LIcon,
     // LCircleMarker,
     LTooltip,
-    // LPopup,
     // LIcon,
     'l-marker-cluster': Vue2LeafletMarkerCluster,
-    'side-bar': SideBar,
-    LPlayback
+    'side-bar': SideBar
   },
   data () {
     return {
@@ -206,6 +306,7 @@ export default {
       },
       bounds: [],
       zoom: 7,
+      curMarker: null,
       markers: [],
       route: {
         latlngs: [],
@@ -248,7 +349,17 @@ export default {
       lastImgURL: 'statics/pp/CrosshairRed.gif',
       lastLocation: 'unavailable',
       lastTime: 0,
-      groupID: null
+      lastTimeString: '',
+      groupID: null,
+      autoUpdate: true,
+      remainTime: 30,
+      refreshInterval: null,
+      overlayZones: false,
+
+      radiusZones: [],
+      polylineZones: [],
+      polygonZones: [],
+      shapeColor: '#11a522'
     }
   },
   created () {
@@ -262,18 +373,33 @@ export default {
         }
       })
     }
+
+    if (this.$q.cookies.has('overlayZones')) {
+      this.overlayZones = this.$q.cookies.get('overlayZones')
+    }
+  },
+  watch: {
+    lastTime: function (val) {
+      console.log('UPDATE LAST TIME', val)
+      const newDate = new Date(val)
+      this.lastTimeString = date.formatDate(newDate, 'DD/MM/YYYY HH:mm:ss')
+    }
   },
   mounted () {
-    const now = new Date()
-    this.lastTime = now.getTime() / 1000
+    this.lastTime = date.formatDate(Date.now(), 'YYYY-MM-DD HH:mm:ss')
     this.getGroupList()
+  },
+  beforeRouteLeave (to, from, next) {
+    this.autoUpdate = false
+    this.refreshCountStop()
+    next()
   },
   methods: {
     convertTimestamp (val, showTimeZone = false) {
       const offset = showTimeZone ? this.timeOffset : 0
 
       const timeStamp = new Date((val + offset) * 1000)
-      return date.formatDate(timeStamp, 'YYYY-MM-DD HH:mm:ss')
+      return date.formatDate(timeStamp, 'DD/MM/YYYY HH:mm:ss')
     },
     getCompass (heading) {
       return Util.getCompass(heading)
@@ -282,17 +408,10 @@ export default {
       return Util.getStatusCode(code)
     },
     getMarkerInfo (d) {
-      const dev = d.deviceID.toUpperCase()
-      const spdfmt = d.speedKPH.toFixed(1) + ' km/h'
-      const compass = this.getCompass(d.heading)
-
-      let str = '<span>' + dev + '</span><br>'
-      str += '<span>' + spdfmt + '</span><br>'
-      if (d.speedKPH > 0) {
-        const head = d.heading.toFixed(0) + '&deg; &nbsp;(' + compass + ')'
-        str += '<span>' + head + '</span>'
-      }
-      return str
+      return Util.getMarkerInfo(d, this.timeZone)
+    },
+    getMarkerIcon (d) {
+      return Util.getMarkerIcon(d)
     },
     getGroupList: async function () {
       const params = {
@@ -328,21 +447,32 @@ export default {
     getLastEvents: async function () {
       const params = {
         conditions: {
-          lastTime: this.lastTime
         }
       }
+
+      const endDate = new Date(this.lastTime)
+      const timeStamp = endDate.getTime() / 1000
+      params.conditions.lastTime = timeStamp - this.timeOffset
 
       if (this.groupID !== 'All') {
         params.conditions.groupID = this.groupID
         params.conditions.accountID = this.groupList.find(group => group.groupID === this.groupID).accountID
       }
 
+      const accountID = this.groupList.find(group => group.groupID === this.groupID).accountID
+      this.getOverlayZone(accountID)
+
       try {
-        this.loading = true
+        // this.loading = true
         let res = await api.getGroupLastEvent(params)
         console.log('RESULT', res)
+        let eventCount = 0
 
-        if (res.data.event) {
+        res.data.event.map(event => {
+          if (event) eventCount++
+        })
+
+        if (eventCount > 0) {
           this.locationData = []
           this.markers = []
           const data = res.data.event
@@ -354,11 +484,13 @@ export default {
           }
 
           data.map((item, idx) => {
+            item.id = data.length - idx
             this.markers.push({
               id: data.length - idx,
               lat: item.latitude,
               lng: item.longitude,
-              info: this.getMarkerInfo(item)
+              info: this.getMarkerInfo(item),
+              icon: this.getMarkerIcon(item)
             })
 
             this.locationData.push({
@@ -395,117 +527,132 @@ export default {
         }
 
         this.loading = false
+        this.remainTime = 30
+        if (this.autoUpdate) {
+          this.refreshCountStart()
+        }
+
+        console.log('MARKERS', this.markers)
       } catch (e) {
         console.log('ERROR', e)
       }
     },
-    getVehicleRoute: async function (deviceID, startTime, endTime) {
+    getOverlayZone: async function (accountID) {
+      console.log('ACCOUNTID', accountID)
       const params = {
-        conditions: {
-          deviceID: deviceID
-        }
+        conditions: {}
       }
-      if (startTime) {
-        const startDate = new Date(startTime)
-        const timeStamp = startDate.getTime() / 1000
-        params.conditions.start = timeStamp - this.timeOffset
+
+      if (accountID) {
+        params.conditions.accountID = accountID
       }
-      if (endTime) {
-        const endDate = new Date(endTime)
-        const timeStamp = endDate.getTime() / 1000
-        params.conditions.end = timeStamp - this.timeOffset
-      }
+
       try {
-        this.loading = true
-        let res = await api.getRouteData(params)
-        console.log('DATA', res.data)
+        const zoneData = await api.getZonesByAccount(params)
+        const corridorData = await api.getCorridorsByAccount(params)
+        this.radiusZones.splice(0, this.radiusZones.length)
+        this.polylineZones.splice(0, this.polylineZones.length)
+        this.polygonZones.splice(0, this.polygonZones.length)
 
-        if (res.data.events) {
-          this.trackData = []
-          this.locationData = []
-          this.route.latlngs = []
-          const data = res.data.events
-          const bounds = {
-            northBound: data[0].latitude,
-            southBound: data[0].latitude,
-            eastBound: data[0].longitude,
-            westBound: data[0].longitude
+        if (zoneData.data.zones) {
+          const data = zoneData.data.zones
+          for (let i = 0; i < data.length; i++) {
+            const latlngs = []
+            for (let j = 1; j <= 10; j++) {
+              if (data[i]['latitude' + j] && data[i]['longitude' + j] && data[i]['latitude' + j] !== 0 && data[i]['longitude' + j] !== 0) {
+                latlngs.push({
+                  lat: data[i]['latitude' + j],
+                  lng: data[i]['longitude' + j]
+                })
+              }
+            }
+
+            if (data[i].vertices) {
+              const points = data[i].vertices.split(',')
+              points.map(point => {
+                const pos = point.split('/')
+                latlngs.push({
+                  lat: parseFloat(pos[0]),
+                  lng: parseFloat(pos[1])
+                })
+              })
+            }
+
+            if (latlngs.length > 0) {
+              switch (data[i].zoneType) {
+                case 0:
+                  this.radiusZones.push({
+                    latlngs: latlngs,
+                    radius: data[i].radius,
+                    label: data[i].description
+                  })
+                  break
+                case 2:
+                  this.polylineZones.push({
+                    latlngs: latlngs,
+                    radius: data[i].radius,
+                    label: data[i].description
+                  })
+                  break
+                default:
+                  this.polygonZones.push({
+                    latlngs: latlngs,
+                    label: data[i].description
+                  })
+              }
+            }
           }
-
-          data.map((item, idx) => {
-            this.route.latlngs.push({
-              lat: item.latitude,
-              lng: item.longitude
-            })
-            this.locationData.push({
-              id: data.length - idx,
-              ...item
-            })
-
-            if (bounds.eastBound < item.longitude) {
-              bounds.eastBound = item.longitude
-            }
-            if (bounds.westBound > item.longitude) {
-              bounds.westBound = item.longitude
-            }
-            if (bounds.northBound > item.latitude) {
-              bounds.northBound = item.latitude
-            }
-            if (bounds.southBound < item.latitude) {
-              bounds.southBound = item.latitude
-            }
-          })
-
-          this.marker = {
-            lat: data[data.length - 1].latitude,
-            lng: data[data.length - 1].longitude
-          }
-          this.marker.visible = true
-          this.marker.info = this.getMarkerInfo(this.locationData[data.length - 1])
-
-          this.$refs.map.mapObject.fitBounds([
-            [bounds.northBound, bounds.westBound],
-            [bounds.southBound, bounds.eastBound]
-          ])
-
-          this.trackData.push(Array.from(this.locationData).reverse())
-          this.updateMeasurement()
-          // this.marker.icon = Util.getHeadingMarkerURL(data)
-          //
-          // this.center = this.marker.position
-          // this.zoom = 12
-          // this.locationData.splice(0, 1, data)
-        } else {
-          this.lastLocation = 'unavailable'
-          this.marker.visible = false
-
-          this.center = {
-            lat: 1.3512,
-            lng: 104.0084
-          }
-          this.zoom = 4
         }
 
-        this.loading = false
+        if (corridorData.data.corridors) {
+          const data = corridorData.data.corridors
+
+          for (let i = 0; i < data.length; i++) {
+            const latlngs = []
+
+            for (let j = 0; j < data[i].latlngs.length; j++) {
+              const positions = data[i].latlngs[j]
+
+              for (let pos = 1; pos <= 10; pos++) {
+                if (positions['latitude' + pos] && positions['longitude' + pos] && positions['latitude' + pos] !== 0 && positions['longitude' + pos] !== 0) {
+                  latlngs.push({
+                    lat: positions['latitude' + pos],
+                    lng: positions['longitude' + pos]
+                  })
+                }
+              }
+            }
+
+            if (latlngs.length > 0) {
+              this.polylineZones.push({
+                latlngs: latlngs,
+                radius: data[i].radius
+              })
+            }
+          }
+        }
       } catch (e) {
-        this.marker.visible = false
         console.log('ERROR', e)
       }
     },
     onSubmit () {
       console.log('UPDATE PLAYBACK STATUS, PRUNE CLUSTER')
     },
-    updateMarker (time) {
-      this.lastTime = time
-      this.getLastEvents()
-    },
-    showToolTip (data) {
+    showToolTip (data, index) {
       this.isPlayback = false
       this.showLocations = false
-      this.marker.lat = data.latitude
-      this.marker.lng = data.longitude
-      this.marker.info = this.getMarkerInfo(data)
-      this.$refs.marker.mapObject.openTooltip()
+      this.center = Object.assign({}, { lat: data.latitude, lng: data.longitude })
+      this.$refs.map.mapObject.setView(this.center, 12)
+
+      for (let i = 0; i < this.markers.length; i++) {
+        if (i === index) {
+          this.$refs.marker1[i].mapObject.openTooltip()
+          this.$refs.marker2[i].mapObject.openTooltip()
+        } else {
+          this.$refs.marker1[i].mapObject.closeTooltip()
+          this.$refs.marker2[i].mapObject.closeTooltip()
+        }
+      }
     },
     getCursorLocation (e) {
       if (e.latlng) {
@@ -528,10 +675,6 @@ export default {
         this.bounds = null
         this.$refs.map.mapObject.setMaxBounds(null)
       }
-    },
-    updateMap () {
-      const { deviceID, startDate, endDate } = this.locationForm
-      this.getVehicleRoute(deviceID, startDate, endDate)
     },
     updateOffset () {
       this.timeOffset = this.timeZoneList.find(zone => zone.desc === this.timeZone).offset
@@ -594,6 +737,66 @@ export default {
     },
     changeClusterMode () {
       this.isClustering = !this.isClustering
+    },
+    getDeviceID (d) {
+      let deviceID = d.deviceID
+      if (d.displayName) {
+        deviceID += ' (' + d.displayName + ')'
+      }
+      return deviceID
+    },
+    getStreetViewLink (d) {
+      const flat = d.latitude.toFixed(5)
+      const flon = d.longitude.toFixed(5)
+      let mapLink = '<a href="https://maps.google.com/?q=' + d.latitude + ',' + d.longitude + '" target="_blank">'
+      mapLink += flat + ' / ' + flon + '</a>'
+      return mapLink
+    },
+    showVehicleMap (d) {
+      this.$router.push({ name: 'Vehicle Location', params: { deviceID: d.deviceID } })
+    },
+    toggleAutoUpdate () {
+      this.autoUpdate = !this.autoUpdate
+      if (this.autoUpdate) {
+        this.refreshCountStart()
+      } else {
+        this.refreshCountStop()
+      }
+    },
+    toggleOverlayZones () {
+      this.overlayZones = !this.overlayZones
+      this.$q.cookies.set('overlayZones', this.overlayZones, {
+        expires: 3
+      })
+    },
+    refreshCountStart () {
+      if (this.refreshInterval) return
+      this.remainTime = 30
+      this.refreshInterval = window.setInterval(this.tick, 1000)
+    },
+    refreshCountStop () {
+      if (!this.refreshInterval) return
+      clearInterval(this.refreshInterval)
+      this.refreshInterval = null
+    },
+    tick () {
+      this.remainTime -= 1
+      if (this.remainTime < 1) {
+        clearInterval(this.refreshInterval)
+        this.refreshInterval = null
+        this.getLastEvents()
+      }
+    },
+    getRadiusPixel: function (radius) {
+      const map = this.$refs.map.mapObject
+      const centerLatLng = map.getCenter() // get map center
+      const pointC = map.latLngToContainerPoint(centerLatLng) // convert to containerpoint (pixels)
+      const pointX = L.point(pointC.x + 10, pointC.y) // add 10 pixels to x
+
+      // convert containerpoints to latlng's
+      const latLngX = map.containerPointToLatLng(pointX)
+      const radiusInPixel = radius * 10 / centerLatLng.distanceTo(latLngX)
+      return radiusInPixel // calculate distance between c and x (latitude)
     }
   }
 }
